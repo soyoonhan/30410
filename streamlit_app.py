@@ -1,10 +1,18 @@
-import streamlit as st
+import base64
+from pathlib import Path
 from textwrap import dedent
 
+import streamlit as st
+
+
+profile_image = Path(__file__).parent / "img" / "1000024521.jpg"
+profile_image_uri = "data:image/jpeg;base64," + base64.b64encode(
+    profile_image.read_bytes()
+).decode("ascii")
 
 st.set_page_config(
     page_title="한소윤 | 자기소개",
-    page_icon="🐱",
+    page_icon="🌊",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
@@ -69,9 +77,20 @@ st.html(
         content: '';
     }
 
-    .hero-copy, .hero-art {
+    .hero-copy, .hero-photo {
         position: relative;
         z-index: 1;
+    }
+
+    .hero-photo {
+        display: block;
+        width: 300px;
+        height: 225px;
+        flex: 0 1 300px;
+        object-fit: cover;
+        border: 3px solid rgba(255, 255, 255, 0.9);
+        border-radius: 18px;
+        box-shadow: 0 15px 38px rgba(69, 142, 196, .15);
     }
 
     .eyebrow {
@@ -106,24 +125,6 @@ st.html(
         color: var(--muted);
         font-size: 1.08rem;
         line-height: 1.8;
-    }
-
-    .hero-art {
-        display: grid;
-        width: 210px;
-        height: 210px;
-        flex: 0 0 210px;
-        place-items: center;
-        border: 1px solid rgba(255,255,255,.9);
-        border-radius: 50%;
-        background: radial-gradient(circle at 35% 30%, #fff 0, #edf8ff 48%, #cce8ff 100%);
-        box-shadow: 0 15px 38px rgba(69, 142, 196, .15);
-        font-size: 5.5rem;
-        animation: float 4s ease-in-out infinite;
-    }
-
-    .hero-art span {
-        transform: translateY(-3px);
     }
 
     .section {
@@ -223,11 +224,6 @@ st.html(
         text-align: center;
     }
 
-    @keyframes float {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-9px); }
-    }
-
     @media (max-width: 680px) {
         [data-testid="stMainBlockContainer"] {
             padding: 1rem 1rem 2rem;
@@ -235,19 +231,18 @@ st.html(
 
         .hero {
             min-height: 0;
-            flex-direction: column-reverse;
+            flex-direction: column;
             align-items: flex-start;
             gap: 1.25rem;
             padding: 1.6rem;
             border-radius: 18px;
         }
 
-        .hero-art {
-            width: 112px;
-            height: 112px;
-            flex-basis: 112px;
+        .hero-photo {
+            width: min(100%, 300px);
+            height: auto;
+            aspect-ratio: 4 / 3;
             align-self: center;
-            font-size: 3.3rem;
         }
 
         .hero-copy p {
@@ -276,9 +271,7 @@ st.html(
                 <h1>안녕하세요,<br><strong>한소윤</strong>입니다!</h1>
                 <p>경복비즈니스고등학교 IT과 3학년 한소윤입니다.<br>관심 있는 분야를 배우며 한 걸음씩 성장하고 있어요.</p>
             </div>
-            <div class="hero-art" aria-label="고양이 이모티콘">
-                <span>🐱</span>
-            </div>
+            <img class="hero-photo" src="__PROFILE_IMAGE__" alt="꽃다발을 들고 함께 찍은 친구들과 선생님 사진">
         </section>
 
         <section class="section">
@@ -323,5 +316,5 @@ st.html(
 
         <p class="page-footer">소윤의 페이지에 들러주셔서 감사합니다</p>
     </main>
-    """),
+    """).replace("__PROFILE_IMAGE__", profile_image_uri),
 )
