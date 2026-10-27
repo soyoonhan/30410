@@ -1,1 +1,225 @@
+import os
+from pathlib import Path
 
+import streamlit as st
+from PIL import Image
+
+
+st.set_page_config(page_title="한소윤 소개", page_icon="✨", layout="wide")
+
+# 파일 위치 기준으로 프로필 이미지 찾기
+base_dir = Path(__file__).resolve().parent if __file__ else Path.cwd()
+profile_candidates = [
+    base_dir / "img 1000024521.jpg",
+    base_dir / "1000024521.jpg",
+    base_dir / "img_1000024521.jpg",
+    base_dir / "profile.jpg",
+    base_dir / "photo.jpg",
+]
+
+profile_path = next((p for p in profile_candidates if p.exists()), None)
+if profile_path is None:
+    for item in base_dir.iterdir():
+        if item.is_file() and "1000024521" in item.name.lower():
+            profile_path = item
+            break
+
+# 기본 폰트 및 색상
+PAGE_BG = "#dfeefb"
+CARD_BG = "rgba(255,255,255,0.75)"
+TEXT_MAIN = "#1d3557"
+TEXT_SUB = "#3d5a80"
+ACCENT = "#8ecae6"
+ACCENT_DEEP = "#6aa9d6"
+
+# 배경 이미지 설정 (무료 Unsplash)
+BACKGROUND_URL = "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1600&q=80"
+
+st.markdown(
+    f"""
+    <style>
+        html, body, [data-testid="stAppViewContainer"] {{
+            background: linear-gradient(180deg, {PAGE_BG} 0%, #edf7ff 100%);
+        }}
+        .stApp {{
+            background-image: linear-gradient(rgba(255,255,255,0.38), rgba(255,255,255,0.38)), url('{BACKGROUND_URL}');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }}
+        .profile-card {{
+            background: {CARD_BG};
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.6);
+            border-radius: 28px;
+            padding: 2rem 2rem 1.5rem 2rem;
+            box-shadow: 0 20px 50px rgba(88, 131, 177, 0.18);
+        }}
+        .profile-ring {{
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            border: 6px solid rgba(255,255,255,0.9);
+            box-shadow: 0 12px 30px rgba(96, 151, 189, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: linear-gradient(135deg, #ffffff, #dfeefb);
+            margin: 0 auto;
+        }}
+        .profile-ring img {{
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            display: block;
+        }}
+        .title-text {{
+            font-size: 2.7rem;
+            font-weight: 800;
+            color: {TEXT_MAIN};
+            letter-spacing: -0.04em;
+            margin-bottom: 0.25rem;
+        }}
+        .subtitle {{
+            font-size: 1.1rem;
+            color: {TEXT_SUB};
+            font-weight: 600;
+        }}
+        .info-badge {{
+            display: inline-block;
+            background: linear-gradient(135deg, {ACCENT}, {ACCENT_DEEP});
+            color: white;
+            border-radius: 999px;
+            padding: 0.5rem 1rem;
+            margin: 0.25rem 0.4rem 0.25rem 0;
+            font-weight: 700;
+            font-size: 0.9rem;
+            box-shadow: 0 8px 18px rgba(94, 154, 207, 0.25);
+        }}
+        .story-box {{
+            background: rgba(255,255,255,0.65);
+            border-left: 7px solid {ACCENT_DEEP};
+            border-radius: 18px;
+            padding: 1.2rem 1.2rem 1rem 1.2rem;
+            color: {TEXT_MAIN};
+            line-height: 1.7;
+            box-shadow: 0 8px 20px rgba(110, 148, 180, 0.12);
+        }}
+        .small-label {{
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            color: {TEXT_SUB};
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }}
+        @media (max-width: 768px) {{
+            .profile-ring {{
+                width: 160px;
+                height: 160px;
+            }}
+            .title-text {{
+                font-size: 2rem;
+            }}
+        }}
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+# 프로필 이미지 준비
+if profile_path is not None and profile_path.exists():
+    profile_image = Image.open(profile_path).convert("RGB")
+else:
+    profile_image = None
+
+left, right = st.columns([1.1, 1.5], gap="large")
+
+with left:
+    st.markdown('<div class="profile-card">', unsafe_allow_html=True)
+    st.markdown('<div class="profile-ring">', unsafe_allow_html=True)
+    if profile_image is not None:
+        st.image(profile_image, use_container_width=True)
+    else:
+        st.markdown(
+            """
+            <div style='width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#dfeefb,#b7d9f2);font-size:3rem;'>✨</div>
+            """,
+            unsafe_allow_html=True,
+        )
+    st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown("<div style='height: 1.3rem;'></div>", unsafe_allow_html=True)
+    st.markdown("<div class='small-label'>PROFILE</div>", unsafe_allow_html=True)
+    st.markdown("<div class='subtitle'>경복비즈니스고등학교 3학년 · IT과</div>", unsafe_allow_html=True)
+    st.markdown("<div class='subtitle'>꿈: 세무 공무원</div>", unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+
+with right:
+    st.markdown('<div class="profile-card">', unsafe_allow_html=True)
+    st.markdown("<div class='title-text'>한소윤</div>", unsafe_allow_html=True)
+    st.markdown("<div class='subtitle'>세무 행정과 디지털 시대를 함께 준비하는 학생</div>", unsafe_allow_html=True)
+
+    st.markdown("<div style='height: 1.2rem;'></div>", unsafe_allow_html=True)
+    st.markdown(
+        """
+        <div>
+            <span class='info-badge'>#성실함</span>
+            <span class='info-badge'>#꼼꼼함</span>
+            <span class='info-badge'>#협업</span>
+            <span class='info-badge'>#문서정리</span>
+            <span class='info-badge'>#IT과</span>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    st.markdown("<div style='height: 1.6rem;'></div>", unsafe_allow_html=True)
+    st.markdown("<div class='small-label'>ABOUT ME</div>", unsafe_allow_html=True)
+    st.markdown(
+        """
+        <div class='story-box'>
+            안녕하세요! 저는 경복비즈니스고등학교 3학년 IT과 학생인 한소윤입니다.<br>
+            저의 진로는 세무 공무원이며, 숫자와 자료를 통해 사람들에게 실질적인 도움을 주는 일을 하고 싶습니다.<br>
+            저는 컴퓨터 활용 능력, 논리적 사고, 꼼꼼한 업무 처리 능력을 키우며,
+            앞으로 공공기관과 행정 업무 속에서 책임감 있게 일할 수 있는 인재가 되고자 노력하고 있습니다.<br><br>
+            평소에는 꾸준한 자기관리와 학습 습관을 중요하게 생각하고,
+            협업을 통해 함께 성장하는 것을 좋아합니다. 또한, 디지털 기술을 활용해 더 효율적인 업무를 만들고,
+            공정하고 정확한 업무 수행을 위해 계속 배우고 있습니다.
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    st.markdown("<div style='height: 1.5rem;'></div>", unsafe_allow_html=True)
+    cols = st.columns(3)
+    with cols[0]:
+        st.markdown("<div class='small-label'>SCHOOL</div>", unsafe_allow_html=True)
+        st.markdown("<div class='subtitle'>경복비즈니스고등학교</div>", unsafe_allow_html=True)
+    with cols[1]:
+        st.markdown("<div class='small-label'>GRADE</div>", unsafe_allow_html=True)
+        st.markdown("<div class='subtitle'>3학년</div>", unsafe_allow_html=True)
+    with cols[2]:
+        st.markdown("<div class='small-label'>MAJOR</div>", unsafe_allow_html=True)
+        st.markdown("<div class='subtitle'>IT과</div>", unsafe_allow_html=True)
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+st.markdown("<div style='height: 2rem;'></div>", unsafe_allow_html=True)
+
+# 하단 자기소개 영역
+st.markdown(
+    """
+    <div style='background: rgba(255,255,255,0.4); border-radius: 26px; padding: 1.5rem 1.8rem; border: 1px solid rgba(255,255,255,0.6); box-shadow: 0 15px 35px rgba(118,154,188,0.12);'>
+        <div style='font-size: 0.78rem; font-weight: 800; letter-spacing: 0.14em; color: #4d7096; text-transform: uppercase;'>Future Goal</div>
+        <div style='font-size: 2rem; font-weight: 800; color: #1d3557; margin-top: 0.5rem;'>세무 공무원으로서 사람들에게 신뢰를 주는 사람</div>
+        <div style='font-size: 1.08rem; color: #3d5a80; line-height: 1.8; margin-top: 1rem;'>
+            앞으로는 세무와 행정 업무를 바탕으로 공정한 시스템을 만들고,
+            국민에게 정확하고 신뢰할 수 있는 서비스를 제공하는 인재가 되겠습니다.<br>
+            또한, 컴퓨터 활용 능력과 세무 전문 지식을 함께 익혀 실무에 바로 적용할 수 있는 역량을 쌓고 있습니다.
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
